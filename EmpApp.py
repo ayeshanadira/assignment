@@ -30,7 +30,7 @@ def addemp():
     return render_template('AddEmp.html')
 
 
-@app.route("/getemp", methods=['GET', 'POST'])
+@app.route("/getemp", methods=['GET')
 def about():
     return render_template('GetEmp.html')
 
@@ -84,9 +84,6 @@ def AddEmp():
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
 
-@app.route("/getEmp", methods=['GET'])
-def getEmp():
-    return render_template('GetEmp.html')
 
 @app.route("/getEmp/fetchdata", methods=['POST'])
 def fetchdata():
@@ -115,6 +112,48 @@ def fetchdata():
 
         finally:
             cursor.close()
+
+    print("Fail to access the page")
+    return redirect("/getEmp")
+
+
+@app.route("/edit", methods=['GET'])
+def edit_employee():
+    return render_template('EditEmp.html')
+                               
+@app.route('/getEmp/fetchdata/edit/<id>', methods = ['GET'])
+def get_employee(id):
+    conn = db_conn
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+  
+    cur.execute('SELECT * FROM employee WHERE emp_id = %s', (id))
+    data = cur.fetchall()
+    cur.close()
+    print(data[0])
+    return render_template('EditEmp.html', employee = data[0])
+
+@app.route('/update/<id>', methods=['POST'])
+def update_employee(id):
+    conn = db_conn
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    if request.method == 'POST':
+        firstName = request.form['first_name']
+        lastName = request.form['last_name']
+        pri_skill = request.form['pri_skill']
+        location = request.form['location']
+
+        cur.execute("""
+            UPDATE employee
+            SET first_name = %s,
+                last_name = %s,
+                pri_skill = %s,
+                location = %s
+            WHERE emp_id = %s
+        """, (firstName, lastName, pri_skill, location, id))
+
+        conn.commit()
+        return redirect('/getEmp')                             
+                     
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
