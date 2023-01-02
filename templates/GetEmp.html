@@ -1,7 +1,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Stackfindover: Sign in</title>
+  <title>Get Employee Details</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
@@ -301,6 +301,44 @@ a.ssolink {
                 </div>
               </form>
             </div>
+            
+			{% if (employee != null) %}
+			<br/><br/>
+
+			<div class="container">
+				<div class="row">
+					<table class="table table-bordered table-hover">
+						<thead class="table-dark">
+							<th>ID</th>
+							<th>First name</th>
+							<th>Last name</th>
+							<th>Skill</th>
+							<th>Location</th>
+						</thead>
+						<tbody class="table-light">
+							<td>{{employee[0]}}</td>
+							<td>{{employee[1]}}</td>
+							<td>{{employee[2]}}</td>
+							<td>{{employee[3]}}</td>
+							<td>{{employee[4]}}</td>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="row justify-content-center mt-5">
+					<div class="col-6 col-md-4 text-center">
+						<a href="/getEmp/fetchdata/edit/{{employee[0]}}">
+							<button type="submit" name="submit" value="submit" class="btn btn-dark btn-lg w-100">Edit Employee</button>
+						</a>
+					</div>
+				</div>
+
+
+			</div>
+
+
+
+			{% endif %}                                                                                              
           </div>
           <div class="footer-link padding-top--24">
           </div>
