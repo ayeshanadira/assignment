@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, , redirect
 from pymysql import connections
 import os
 import boto3
 from config import *
+import pymysql
 
 app = Flask(__name__)
 
@@ -24,11 +25,6 @@ table = 'employee'
 @app.route("/", methods=['GET', 'POST'])
 def home():
     return render_template('AddEmp.html')
-
-
-@app.route("/about", methods=['POST'])
-def about():
-    return render_template('www.intellipaat.com')
 
 
 @app.route("/addemp", methods=['POST'])
@@ -79,6 +75,80 @@ def AddEmp():
 
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
+
+@app.route("/getEmp", methods=['GET'])
+def getEmp():
+    return render_template('GetEmp.html')
+
+@app.route("/getEmp/fetchdata", methods=['POST'])
+def fetchdata():
+
+    if (request.form['submit'] == "submit"):
+        emp_id = request.form['emp_id']
+
+        select_sql = "SELECT * FROM employee where emp_id = %s"
+
+        cursor = db_conn.cursor()
+
+        try:
+            cursor.execute(select_sql, (emp_id))
+
+            if cursor.rowcount == 1:
+                data = cursor.fetchall()
+                cursor.close()
+
+                return render_template('GetEmp.html', employee = data[0])
+            
+            else:
+                print("Fail to get employee.")
+
+        except Exception as e:
+            print(str(e))
+
+        finally:
+            cursor.close()
+
+    print("Fail to access the page")
+    return redirect("/getEmp")
+
+
+@app.route("/edit", methods=['GET'])
+def edit_employee():
+    return render_template('EditEmp.html')
+
+
+@app.route('/getEmp/fetchdata/edit/<id>', methods = ['GET'])
+def get_employee(id):
+    conn = db_conn
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+  
+    cur.execute('SELECT * FROM employee WHERE emp_id = %s', (id))
+    data = cur.fetchall()
+    cur.close()
+    print(data[0])
+    return render_template('EditEmp.html', employee = data[0])
+
+@app.route('/update/<id>', methods=['POST'])
+def update_employee(id):
+    conn = db_conn
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    if request.method == 'POST':
+        firstName = request.form['first_name']
+        lastName = request.form['last_name']
+        pri_skill = request.form['pri_skill']
+        location = request.form['location']
+
+        cur.execute("""
+            UPDATE employee
+            SET first_name = %s,
+                last_name = %s,
+                pri_skill = %s,
+                location = %s
+            WHERE emp_id = %s
+        """, (firstName, lastName, pri_skill, location, id))
+
+        conn.commit()
+        return redirect('/getEmp')
 
 
 if __name__ == '__main__':
