@@ -314,7 +314,7 @@
                         <div class="formbg-inner padding-horizontal--48">
                             <span class="padding-bottom--15">Employee Database</span>
                             <form id="stripe-login" action="/addemp" autocomplete="on" method="POST" enctype="multipart/form-data">
-
+                                {% for row in records %}
                                 <div class="field padding-bottom--24">
                                     <label for="emp_id">Employee ID</label>
                                     {{ id }}
@@ -322,25 +322,25 @@
 
                                 <div class="field padding-bottom--24">
                                     <label for="first_name">First Name</label>
-                                    {{ fname }}
+                                    {{ row[0] }}
                                 </div>
 
 
                                 <div class="field padding-bottom--24">
                                     <label for="last_name">Last Name</label>
-                                    {{ lname }}
+                                    {{ row[1] }}
                                 </div>
 
 
                                 <div class="field padding-bottom--24">
                                     <label for="pri_skill">Primary Skills</label>
-                                    {{ interest }}
+                                    {{ row[2] }}
                                 </div>
 
 
                                 <div class="field padding-bottom--24">
                                     <label for="location">Location</label>
-                                    {{ location }}
+                                    {{ row[3] }}
                                 </div>
 
 
