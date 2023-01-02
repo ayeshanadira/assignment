@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from pymysql import connections
 import os
 import boto3
@@ -113,7 +113,7 @@ def fetchdata():
             cursor.close()
 
     print("Fail to access the page")
-    return redirect("/getEmp")
+    return  redirect("/getEmp")
 
 
 @app.route("/edit", methods=['GET'])
