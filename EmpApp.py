@@ -101,17 +101,12 @@ def GetEmp():
         db_conn.commit()
         
         records = cursor.fetchall()
-        for row in records:
-        first_name = row[0]
-        last_name = row[1]
-        pri_skill = row[2]
-        location = row[3]
 
     finally:
         cursor.close()
 
     print("all modification done...")
-    return render_template('GetEmpOutput.html', id=emp_id, fname=first_name, lname=last_name, interest=pri_skill, location=location)
+    return render_template('GetEmpOutput.html', id=emp_id, records=records)
 
 
 
