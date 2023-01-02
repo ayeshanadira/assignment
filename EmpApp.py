@@ -116,10 +116,7 @@ def fetchdata():
         finally:
             cursor.close()
 
-    print("Fail to access the page")
-    return redirect("/getEmp")
-
-
+      return render_template('GetEmp.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
