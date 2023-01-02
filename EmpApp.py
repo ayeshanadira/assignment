@@ -34,6 +34,10 @@ def addemp():
 def about():
     return render_template('GetEmp.html')
 
+@app.route("/getempoutput", methods=['POST'])
+def about():
+    return render_template('GetEmpOutput.html')
+
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
@@ -83,6 +87,32 @@ def AddEmp():
 
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
+
+@app.route("/getemp", methods=['POST'])
+def GetEmp():
+    emp_id = request.form['emp_id']
+
+    select_sql = "SELECT first_name, last_name, pri_skill, location FROM employee WHERE emp_id = %s"
+    cursor = db_conn.cursor()
+
+    try:
+
+        cursor.execute(select_sql, emp_id)
+        db_conn.commit()
+        
+        records = cursor.fetchall()
+        for row in records:
+        first_name = row[0]
+        last_name = row[1]
+        pri_skill = row[2]
+        location = row[3]
+
+    finally:
+        cursor.close()
+
+    print("all modification done...")
+    return render_template('GetEmpOutput.html', id=emp_id, fname=first_name, lname=last_name, interest=pri_skill, location=location)
+
 
 
 if __name__ == '__main__':
