@@ -34,14 +34,14 @@ def about():
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
-    emp_id = request.form['emp_id']
+    emp_id = ""
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     pri_skill = request.form['pri_skill']
     location = request.form['location']
     emp_image_file = request.files['emp_image_file']
 
-    insert_sql = "INSERT INTO employee VALUES (%s, %s, %s, %s, %s)"
+    insert_sql = "INSERT INTO employee(first_name, last_name, pri_skill, location) VALUES (%s, %s, %s, %s)"
     cursor = db_conn.cursor()
 
     if emp_image_file.filename == "":
@@ -49,8 +49,31 @@ def AddEmp():
 
     try:
 
-        cursor.execute(insert_sql, (emp_id, first_name, last_name, pri_skill, location))
+        cursor.execute(insert_sql, ( first_name, last_name, pri_skill, location))
         db_conn.commit()
+
+ 
+        try:
+            select_sql = "SELECT * FROM employee ORDER BY emp_id LIMIT 1"
+            cursor.execute(select_sql)
+
+            if cursor.rowcount == 1:
+                data = cursor.fetchall()
+                cursor.close()
+
+                emp_id = data[0][0]
+                
+            else:
+                print("Fail to get employee.")
+
+        except Exception as e:
+            print(str(e))
+
+        finally:
+            cursor.close()
+
+
+
         emp_name = "" + first_name + " " + last_name
         # Uplaod image file in S3 #
         emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file"
@@ -59,13 +82,18 @@ def AddEmp():
         try:
             print("Data inserted in MySQL RDS... uploading image to S3...")
             s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image_file)
+            print("i failed here")
             bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
             s3_location = (bucket_location['LocationConstraint'])
+
+            print("i failed here")
 
             if s3_location is None:
                 s3_location = ''
             else:
                 s3_location = '-' + s3_location
+
+            print("im here")
 
             object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
                 s3_location,
@@ -79,7 +107,7 @@ def AddEmp():
         cursor.close()
 
     print("all modification done...")
-    return render_template('AddEmpOutput.html', name=emp_name)
+    return render_template('AddEmpOutput.html', name = emp_name)
 
 @app.route("/getEmp", methods=['GET'])
 def getEmp():
