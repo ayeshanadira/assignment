@@ -30,11 +30,6 @@ def addemp():
     return render_template('AddEmp.html')
 
 
-@app.route("/getemp", methods=['GET'])
-def about():
-    return render_template('GetEmp.html')
-
-
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
     emp_id = request.form['emp_id']
@@ -55,7 +50,7 @@ def AddEmp():
         cursor.execute(insert_sql, (emp_id, first_name, last_name, pri_skill, location))
         db_conn.commit()
         emp_name = "" + first_name + " " + last_name
-        # Uplaod image file in S3 #
+        # Upload image file in S3 #
         emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file"
         s3 = boto3.resource('s3')
 
@@ -84,6 +79,10 @@ def AddEmp():
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
 
+
+@app.route("/getEmp", methods=['GET'])
+def getEmp():
+    return render_template('GetEmp.html')
 
 @app.route("/getEmp/fetchdata", methods=['POST'])
 def fetchdata():
