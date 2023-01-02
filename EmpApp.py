@@ -26,10 +26,6 @@ table = 'employee'
 def home():
     return render_template('AddEmp.html')
 
-@app.route("/addemp", methods=['GET', 'POST'])
-def addemp():
-    return render_template('AddEmp.html')
-
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
