@@ -34,10 +34,6 @@ def addemp():
 def about():
     return render_template('GetEmp.html')
 
-@app.route("/getempoutput", methods=['POST'])
-def about():
-    return render_template('GetEmpOutput.html')
-
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
