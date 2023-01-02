@@ -30,7 +30,7 @@ def addemp():
     return render_template('AddEmp.html')
 
 
-@app.route("/getemp", methods=['GET')
+@app.route("/getemp", methods=['GET'])
 def about():
     return render_template('GetEmp.html')
 
