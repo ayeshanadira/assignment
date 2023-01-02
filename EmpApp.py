@@ -84,25 +84,40 @@ def AddEmp():
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
 
-@app.route("/getemp", methods=['POST'])
-def GetEmp():
-    emp_id = request.form['emp_id']
+@app.route("/getEmp", methods=['GET'])
+def getEmp():
+    return render_template('GetEmp.html')
 
-    select_sql = "SELECT first_name, last_name, pri_skill, location FROM employee WHERE emp_id = %s"
-    cursor = db_conn.cursor()
+@app.route("/getEmp/fetchdata", methods=['POST'])
+def fetchdata():
 
-    try:
+    if (request.form['submit'] == "submit"):
+        emp_id = request.form['emp_id']
 
-        cursor.execute(select_sql, emp_id)
-        db_conn.commit()
-        
-        records = cursor.fetchall()
+        select_sql = "SELECT * FROM employee where emp_id = %s"
 
-    finally:
-        cursor.close()
+        cursor = db_conn.cursor()
 
-    print("all modification done...")
-    return render_template('GetEmpOutput.html', id=emp_id, records=records)
+        try:
+            cursor.execute(select_sql, (emp_id))
+
+            if cursor.rowcount == 1:
+                data = cursor.fetchall()
+                cursor.close()
+
+                return render_template('GetEmp.html', employee = data[0])
+            
+            else:
+                print("Fail to get employee.")
+
+        except Exception as e:
+            print(str(e))
+
+        finally:
+            cursor.close()
+
+    print("Fail to access the page")
+    return redirect("/getEmp")
 
 
 
